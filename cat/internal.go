@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"sync"
 	"time"
@@ -76,9 +77,9 @@ func genTrack() []models.TPoint {
 	for i := range res {
 		x := float64(i) / float64(cnt-1) * 100
 		res[i] = models.TPoint{
-			X: x,
-			Y: k*x + b,
-			T: int(time.Now().Unix()),
+			X: math.Round(x*100) / 100,
+			Y: math.Round((k*x+b)*100) / 100,
+			T: int(time.Now().Unix()) - (cnt - i),
 		}
 	}
 
