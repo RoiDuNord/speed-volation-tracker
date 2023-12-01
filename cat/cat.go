@@ -4,7 +4,7 @@ package cat
 
 type CatChan chan message
 
-// New returns new cat entity
+// New returns new cat-brocker entity
 func New() *cat {
 	return new(cat)
 }
@@ -30,7 +30,7 @@ func (c *cat) Subscipt() (CatChan, error) {
 	return c.dataCh, nil
 }
 
-// Close close CAT connection
+// Close close cat connection
 func (c *cat) Close() error {
 	c.connected = false
 
