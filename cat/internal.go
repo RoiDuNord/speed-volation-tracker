@@ -2,6 +2,7 @@ package cat
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -10,15 +11,18 @@ import (
 	"github.com/kvolis/tesgode/models"
 )
 
+var ErrHasNoConn = errors.New("cat has no connection")
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	fmt.Println("seeded")
 }
 
 type cat struct {
-	dataCh CatChan
-	stopCh chan struct{}
-	wg     sync.WaitGroup
+	connected bool
+	dataCh    CatChan
+	stopCh    chan struct{}
+	wg        sync.WaitGroup
 }
 
 type message struct {

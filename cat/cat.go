@@ -1,5 +1,5 @@
-// Package cat simulates the operation of a message broker
-// Minimal functionality implemented
+// Package cat simulates the operation of a message broker.
+// Minimal functionality implemented.
 package cat
 
 type CatChan chan message
@@ -11,11 +11,16 @@ func New() *cat {
 
 // Connect connect to server using conn
 func (c *cat) Connect(conn string) error {
+	c.connected = true
 	return nil
 }
 
 // Subscript returns CatChan and start broadcast
 func (c *cat) Subscipt() (CatChan, error) {
+	if !c.connected {
+		return nil, ErrHasNoConn
+	}
+
 	c.dataCh = make(CatChan)
 	c.stopCh = make(chan struct{})
 
@@ -27,8 +32,11 @@ func (c *cat) Subscipt() (CatChan, error) {
 
 // Close close CAT connection
 func (c *cat) Close() error {
+	c.connected = false
+
 	close(c.stopCh)
 	c.wg.Wait()
+
 	c.dataCh = nil
 	return nil
 }
