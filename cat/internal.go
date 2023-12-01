@@ -2,12 +2,18 @@ package cat
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 
 	"github.com/kvolis/tesgode/models"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+	fmt.Println("seeded")
+}
 
 type cat struct {
 	dataCh CatChan

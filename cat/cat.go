@@ -1,3 +1,5 @@
+// Package cat simulates the operation of a message broker
+// Minimal functionality implemented
 package cat
 
 type CatChan chan message
@@ -25,6 +27,8 @@ func (c *cat) Subscipt() (CatChan, error) {
 
 // Close close CAT connection
 func (c *cat) Close() error {
+	close(c.stopCh)
+	c.wg.Wait()
 	c.dataCh = nil
 	return nil
 }
