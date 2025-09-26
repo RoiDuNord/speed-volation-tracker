@@ -2,21 +2,34 @@
 // Minimal functionality implemented.
 package cat
 
-type CatChan chan message
+import "sync"
+
+type Cat struct {
+	connected bool
+	dataCh    CatChan
+	stopCh    chan struct{}
+	wg        sync.WaitGroup
+}
+
+type Message struct {
+	b []byte
+}
+
+type CatChan chan Message
 
 // New returns new cat-brocker entity
-func New() *cat {
-	return new(cat)
+func New() *Cat {
+	return new(Cat)
 }
 
 // Connect connect to server using conn
-func (c *cat) Connect(conn string) error {
+func (c *Cat) Connect(conn string) error {
 	c.connected = true
 	return nil
 }
 
 // Subscript returns CatChan and start broadcast
-func (c *cat) Subscipt() (CatChan, error) {
+func (c *Cat) Subscript() (CatChan, error) {
 	if !c.connected {
 		return nil, ErrHasNoConn
 	}
@@ -31,7 +44,7 @@ func (c *cat) Subscipt() (CatChan, error) {
 }
 
 // Close close cat connection
-func (c *cat) Close() error {
+func (c *Cat) Close() error {
 	c.connected = false
 
 	close(c.stopCh)
@@ -42,6 +55,6 @@ func (c *cat) Close() error {
 }
 
 // Bytes returns a bytes body message
-func (m *message) Bytes() []byte {
+func (m *Message) Bytes() []byte {
 	return m.b
 }

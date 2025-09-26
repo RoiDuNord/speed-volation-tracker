@@ -3,10 +3,8 @@ package cat
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"math"
 	"math/rand"
-	"sync"
 	"time"
 
 	"github.com/kvolis/tesgode/models"
@@ -14,23 +12,9 @@ import (
 
 var ErrHasNoConn = errors.New("cat has no connection")
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-	fmt.Println("seeded")
-}
+var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-type cat struct {
-	connected bool
-	dataCh    CatChan
-	stopCh    chan struct{}
-	wg        sync.WaitGroup
-}
-
-type message struct {
-	b []byte
-}
-
-func (c *cat) broadcast() {
+func (c *Cat) broadcast() {
 	defer c.wg.Done()
 
 	for {
@@ -38,9 +22,12 @@ func (c *cat) broadcast() {
 
 		passage := genPass()
 		jPass, _ := json.Marshal(passage)
+		if rnd.Intn(20) == 0 && len(jPass) > 10 {
+			jPass = jPass[10:]
+		}
 
 		select {
-		case c.dataCh <- message{b: jPass}:
+		case c.dataCh <- Message{b: jPass}:
 			continue
 		case _, ok := <-c.stopCh:
 			if !ok {
@@ -51,10 +38,42 @@ func (c *cat) broadcast() {
 }
 
 func genPass() models.Passage {
+	count := rnd.Intn(20) + 10
 	return models.Passage{
-		Track:      genTrack(),
+		Track:      genTrack(count),
 		LicenseNum: genGRN(),
+		Speeds:     genSpeeds(count),
+		Classes:    genClasses(count),
+		Sides:      genSides(count),
 	}
+}
+
+func genSpeeds(cnt int) []float64 {
+	baseSpeed := 70 + rand.Float64()*30 - 15
+	res := make([]float64, cnt)
+
+	for i := range res {
+		speed := baseSpeed + rand.Float64()*3 - 1.5
+		res[i] = float64(int(speed*4)) / 4
+	}
+
+	return res
+}
+
+func genClasses(cnt int) []models.VehicleClass {
+	res := make([]models.VehicleClass, cnt)
+	for i := range res {
+		res[i] = models.VehicleClass(rand.Intn(5) - 1)
+	}
+	return res
+}
+
+func genSides(cnt int) []models.VehicleSide {
+	res := make([]models.VehicleSide, cnt)
+	for i := range res {
+		res[i] = models.VehicleSide(rand.Intn(3) - 1)
+	}
+	return res
 }
 
 func genGRN() string {
@@ -62,17 +81,16 @@ func genGRN() string {
 	res := make([]rune, 5)
 
 	for i := range res {
-		res[i] = runes[rand.Intn(len(runes))]
+		res[i] = runes[rnd.Intn(len(runes))]
 	}
 
 	return string(res)
 }
 
-func genTrack() []models.TPoint {
-	cnt := rand.Intn(20) + 10
+func genTrack(cnt int) []models.TPoint {
 	res := make([]models.TPoint, cnt)
 
-	k, b := rand.Float64()*0.2+0.2, rand.Float64()*20+20
+	k, b := rnd.Float64()*0.2+0.2, rnd.Float64()*20+20
 
 	for i := range res {
 		x := float64(i) / float64(cnt-1) * 100
@@ -83,8 +101,8 @@ func genTrack() []models.TPoint {
 		}
 	}
 
-	for i := 0; i < cnt; i++ {
-		j := rand.Intn(cnt)
+	for i := range cnt {
+		j := rnd.Intn(cnt)
 		res[i], res[j] = res[j], res[i]
 	}
 
@@ -92,6 +110,6 @@ func genTrack() []models.TPoint {
 }
 
 func sleep() {
-	dura := rand.Intn(5)*100 + 500
+	dura := rnd.Intn(5)*100 + 500
 	time.Sleep(time.Duration(dura) * time.Millisecond)
 }

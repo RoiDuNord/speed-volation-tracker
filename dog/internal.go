@@ -6,15 +6,13 @@ import (
 	"time"
 )
 
-var ErrHasNoConn = errors.New("dog has no connection")
+var (
+	ErrHasNoConn = errors.New("dog has no connection")
+	ErrInternal  = errors.New("failed new insertion: unexpected internal error")
+)
 
-type dog struct {
-	connected bool
-	id        int
-}
-
-func (d *dog) upd() {
-	d.id++
+func (d *Dog) upd() {
+	d.id.Add(1)
 }
 
 func sleep() {
