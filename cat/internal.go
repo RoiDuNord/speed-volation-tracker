@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/kvolis/tesgode/models"
+	"speed_violation_tracker/models"
 )
 
 var ErrHasNoConn = errors.New("cat has no connection")
