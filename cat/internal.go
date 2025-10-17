@@ -22,9 +22,10 @@ func (c *Cat) broadcast() {
 
 		passage := genPass()
 		jPass, _ := json.Marshal(passage)
+
 		if rnd.Intn(20) == 0 && len(jPass) > 10 {
 			jPass = jPass[10:]
-		}
+		} // это же проверка на поломку?
 
 		select {
 		case c.dataCh <- Message{b: jPass}:

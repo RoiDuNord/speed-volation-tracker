@@ -17,7 +17,7 @@ type Message struct {
 
 type CatChan chan Message
 
-// New returns new cat-brocker entity
+// New returns new cat-broker entity
 func New() *Cat {
 	return new(Cat)
 }

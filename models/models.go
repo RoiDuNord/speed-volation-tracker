@@ -6,7 +6,7 @@ type Passage struct {
 	LicenseNum string   `json:"licenseNumber"`
 
 	Speeds  []float64      `json:"speeds"`
-	Classes []VehicleClass `json:"classes"`
+	Classes []VehicleClass `json:"classes"` // а почему не статичный класс или помехи могут по-разному его определять?
 	Sides   []VehicleSide  `json:"sides"`
 }
 
