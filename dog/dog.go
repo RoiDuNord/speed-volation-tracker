@@ -18,7 +18,7 @@ func New() *Dog {
 	return new(Dog)
 }
 
-// Connect connect to server using conn
+// Connect connects to server using conn
 func (d *Dog) Connect(conn string) error {
 	d.connected = true
 	return nil

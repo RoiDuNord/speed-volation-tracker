@@ -22,7 +22,7 @@ func New() *Cat {
 	return new(Cat)
 }
 
-// Connect connect to server using conn
+// Connect connects to server using conn
 func (c *Cat) Connect(conn string) error {
 	c.connected = true
 	return nil
